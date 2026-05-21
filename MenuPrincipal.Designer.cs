@@ -32,6 +32,7 @@
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(MenuPrincipal));
             Formulario = new TabControl();
             tabUsuarios = new TabPage();
+            btnExportarExcel = new Button();
             lblBuscar = new Label();
             lblListaDeUsuarios = new Label();
             txtBuscar = new TextBox();
@@ -40,6 +41,8 @@
             dataGridView1 = new DataGridView();
             btnAgregarUsuario = new Button();
             tabFormulario = new TabPage();
+            lblRol = new Label();
+            cmbRol = new ComboBox();
             lblTitulo = new Label();
             btnCancelar = new Button();
             lblConfirmar = new Label();
@@ -68,6 +71,7 @@
             // 
             // tabUsuarios
             // 
+            tabUsuarios.Controls.Add(btnExportarExcel);
             tabUsuarios.Controls.Add(lblBuscar);
             tabUsuarios.Controls.Add(lblListaDeUsuarios);
             tabUsuarios.Controls.Add(txtBuscar);
@@ -83,6 +87,18 @@
             tabUsuarios.Text = "Usuarios";
             tabUsuarios.UseVisualStyleBackColor = true;
             tabUsuarios.Click += tabUsuarios_Click;
+            // 
+            // btnExportarExcel
+            // 
+            btnExportarExcel.BackColor = Color.SandyBrown;
+            btnExportarExcel.ForeColor = SystemColors.ButtonHighlight;
+            btnExportarExcel.Location = new Point(574, 230);
+            btnExportarExcel.Name = "btnExportarExcel";
+            btnExportarExcel.Size = new Size(141, 39);
+            btnExportarExcel.TabIndex = 12;
+            btnExportarExcel.Text = "Exportar";
+            btnExportarExcel.UseVisualStyleBackColor = false;
+            btnExportarExcel.Click += btnExportarExcel_Click;
             // 
             // lblBuscar
             // 
@@ -143,7 +159,7 @@
             dataGridView1.Name = "dataGridView1";
             dataGridView1.RowHeadersWidth = 51;
             dataGridView1.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
-            dataGridView1.Size = new Size(521, 361);
+            dataGridView1.Size = new Size(521, 332);
             dataGridView1.TabIndex = 1;
             // 
             // btnAgregarUsuario
@@ -160,6 +176,8 @@
             // 
             // tabFormulario
             // 
+            tabFormulario.Controls.Add(lblRol);
+            tabFormulario.Controls.Add(cmbRol);
             tabFormulario.Controls.Add(lblTitulo);
             tabFormulario.Controls.Add(btnCancelar);
             tabFormulario.Controls.Add(lblConfirmar);
@@ -177,6 +195,24 @@
             tabFormulario.UseVisualStyleBackColor = true;
             tabFormulario.Click += tabPage1_Click;
             // 
+            // lblRol
+            // 
+            lblRol.AutoSize = true;
+            lblRol.Location = new Point(37, 254);
+            lblRol.Name = "lblRol";
+            lblRol.Size = new Size(121, 20);
+            lblRol.TabIndex = 46;
+            lblRol.Text = "Seleccione el rol:";
+            lblRol.TextAlign = ContentAlignment.TopCenter;
+            // 
+            // cmbRol
+            // 
+            cmbRol.FormattingEnabled = true;
+            cmbRol.Location = new Point(37, 277);
+            cmbRol.Name = "cmbRol";
+            cmbRol.Size = new Size(170, 28);
+            cmbRol.TabIndex = 45;
+            // 
             // lblTitulo
             // 
             lblTitulo.AutoSize = true;
@@ -191,7 +227,7 @@
             // 
             btnCancelar.BackColor = Color.DarkGray;
             btnCancelar.ForeColor = SystemColors.ButtonHighlight;
-            btnCancelar.Location = new Point(184, 253);
+            btnCancelar.Location = new Point(184, 323);
             btnCancelar.Name = "btnCancelar";
             btnCancelar.Size = new Size(141, 39);
             btnCancelar.TabIndex = 43;
@@ -221,7 +257,7 @@
             // 
             btnGuardarCambios.BackColor = Color.MediumSeaGreen;
             btnGuardarCambios.ForeColor = SystemColors.ButtonHighlight;
-            btnGuardarCambios.Location = new Point(37, 253);
+            btnGuardarCambios.Location = new Point(37, 323);
             btnGuardarCambios.Name = "btnGuardarCambios";
             btnGuardarCambios.Size = new Size(141, 39);
             btnGuardarCambios.TabIndex = 40;
@@ -274,8 +310,10 @@
             AutoScaleMode = AutoScaleMode.Font;
             ClientSize = new Size(812, 565);
             Controls.Add(Formulario);
+            ForeColor = SystemColors.ControlText;
             Icon = (Icon)resources.GetObject("$this.Icon");
             Name = "MenuPrincipal";
+            StartPosition = FormStartPosition.CenterScreen;
             Text = "MenuPrincipal";
             Load += MenuPrincipal_Load;
             Formulario.ResumeLayout(false);
@@ -310,5 +348,8 @@
         private Label lblBuscar;
         private Label lblListaDeUsuarios;
         private Label lblTitulo;
+        private Label lblRol;
+        private ComboBox cmbRol;
+        private Button btnExportarExcel;
     }
 }

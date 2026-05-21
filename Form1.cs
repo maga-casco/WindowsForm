@@ -5,6 +5,8 @@ namespace Login_WinForm
 {
     public partial class Form1 : Form
     {
+        int intentosFallidos = 0;
+
         public Form1()
         {
             InitializeComponent();
@@ -36,6 +38,8 @@ namespace Login_WinForm
             }
             else if (existe)
             {
+                intentosFallidos = 0;
+
                 MessageBox.Show("Inicio de sesión exitoso.");
 
                 MenuPrincipal menu = new MenuPrincipal();
@@ -44,7 +48,23 @@ namespace Login_WinForm
             }
             else
             {
-                MessageBox.Show("Usuario o contraseña incorrectos. ");
+                intentosFallidos++;
+
+                MessageBox.Show("Usuario o contraseña incorrectos");
+
+                int restantes = 3 - intentosFallidos;
+
+                if (restantes > 0)
+                {
+                    MessageBox.Show("Te quedan " + restantes + " intentos");
+                }
+
+                if (intentosFallidos >= 3)
+                {
+                    MessageBox.Show("Demasiados intentos fallidos");
+
+                    Application.Exit();
+                }
             }
         }
 

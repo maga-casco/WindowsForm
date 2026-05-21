@@ -7,6 +7,7 @@ using System.Drawing;
 using System.Text;
 using System.Windows.Forms;
 using static System.Runtime.InteropServices.JavaScript.JSType;
+using ClosedXML.Excel;
 
 namespace Login_WinForm
 {
@@ -28,7 +29,7 @@ namespace Login_WinForm
             dataGridView1.DataSource = dal.ListarUsuarios();
 
             // Limpia y vuelve a cargar para refrescar los datos
-            dataGridView1.DataSource = null; 
+            dataGridView1.DataSource = null;
             dataGridView1.DataSource = dal.ListarUsuarios();
 
             // Oculta la columna de contraseña
@@ -50,16 +51,22 @@ namespace Login_WinForm
             Formulario.ItemSize = new Size(0, 1);
             Formulario.SizeMode = TabSizeMode.Fixed;
 
+            // ComboBox de roles
+            cmbRol.Items.Add("Programador");
+            cmbRol.Items.Add("Analista");
+            cmbRol.Items.Add("Tester");
+            cmbRol.Items.Add("Diseñador");
+            cmbRol.Items.Add("Administrador");
+
+            cmbRol.SelectedIndex = -1;
+
             // Configura dataGridView
-            dataGridView1.SelectionMode =
-                DataGridViewSelectionMode.FullRowSelect;
-
+            dataGridView1.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
             dataGridView1.MultiSelect = false;
-
             dataGridView1.ReadOnly = true;
 
         }
-      
+
         // BOTÓN DE ELIMINAR UN USUARIO
         private void btnEliminarUsuario_Click(object sender, EventArgs e)
         {
@@ -121,6 +128,7 @@ namespace Login_WinForm
                 txtUsuarios.Text = dataGridView1.SelectedRows[0].Cells["Usuario"].Value.ToString();
                 txtContraseñas.Text = dataGridView1.SelectedRows[0].Cells["Contrasena"].Value.ToString();
                 txtConfirmar.Text = dataGridView1.SelectedRows[0].Cells["Contrasena"].Value.ToString();
+                cmbRol.Text = dataGridView1.SelectedRows[0].Cells["Rol"].Value.ToString();
 
                 lblUsuario.Text = "Usuario";
                 lblTitulo.Text = "Editar un usuario";
@@ -147,6 +155,9 @@ namespace Login_WinForm
 
             // Va a la pestaña del formulario
             Formulario.SelectedTab = tabFormulario;
+
+            cmbRol.SelectedIndex = -1;
+            cmbRol.Text = "";
         }
 
         // BOTÓN DE GUARDAR CAMBIOS
@@ -158,6 +169,7 @@ namespace Login_WinForm
             string usuario = txtUsuarios.Text.Trim();
             string contrasena = txtContraseñas.Text.Trim();
             string confirmar = txtConfirmar.Text.Trim();
+            string rol = cmbRol.Text;
 
             // Validaciones
             if (usuario.Length == 0)
@@ -184,16 +196,18 @@ namespace Login_WinForm
                 return;
             }
 
+            if (string.IsNullOrWhiteSpace(rol))
+            {
+                MessageBox.Show("Seleccione un rol");
+                return;
+            }
+
             bool ok = false;
 
             // Verifica si se edita o se agrega
             if (esEdicion)
             {
-                ok = dal.ModificarUsuario(
-                    idUsuarioSeleccionado,
-                    usuario,
-                    contrasena
-                );
+                ok = dal.ModificarUsuario(idUsuarioSeleccionado, usuario, contrasena, rol);
 
                 if (ok)
                 {
@@ -208,7 +222,7 @@ namespace Login_WinForm
                     return;
                 }
 
-                ok = dal.InsertarUsuario(usuario, contrasena);
+                ok = dal.InsertarUsuario(usuario, contrasena, rol);
 
                 if (ok)
                 {
@@ -235,8 +249,7 @@ namespace Login_WinForm
         {
             UsuarioDAL dal = new UsuarioDAL();
 
-            dataGridView1.DataSource =
-                dal.BuscarUsuarios(txtBuscar.Text.Trim());
+            dataGridView1.DataSource = dal.BuscarUsuarios(txtBuscar.Text.Trim());
         }
 
         private void tabUsuarios_Click(object sender, EventArgs e)
@@ -246,6 +259,68 @@ namespace Login_WinForm
         private void tabPage1_Click(object sender, EventArgs e)
         {
 
+        }
+
+        // BOTÓN DE EXPORTAR LA LISTA A EXCEL
+        private void btnExportarExcel_Click(object sender, EventArgs e)
+        {
+            if (dataGridView1.Rows.Count > 0)
+            {
+                DataTable dt = new DataTable();
+
+                // Columnas
+                foreach (DataGridViewColumn columna in dataGridView1.Columns)
+                {
+                    if (columna.Visible)
+                    {
+                        dt.Columns.Add(columna.HeaderText);
+                    }
+                }
+
+                // Filas
+                foreach (DataGridViewRow fila in dataGridView1.Rows)
+                {
+                    if (!fila.IsNewRow)
+                    {
+                        DataRow dr = dt.NewRow();
+
+                        int colIndex = 0;
+
+                        foreach (DataGridViewColumn columna in dataGridView1.Columns)
+                        {
+                            if (columna.Visible)
+                            {
+                                dr[colIndex] = fila.Cells[columna.Index].Value?.ToString();
+                                colIndex++;
+                            }
+                        }
+
+                        dt.Rows.Add(dr);
+                    }
+                }
+
+                using (XLWorkbook wb = new XLWorkbook())
+                {
+                    wb.Worksheets.Add(dt, "Usuarios");
+
+                    SaveFileDialog saveFile = new SaveFileDialog();
+
+                    saveFile.Filter = "Excel Workbook|*.xlsx";
+                    saveFile.Title = "Guardar archivo Excel";
+                    saveFile.FileName = "Usuarios.xlsx";
+
+                    if (saveFile.ShowDialog() == DialogResult.OK)
+                    {
+                        wb.SaveAs(saveFile.FileName);
+
+                        MessageBox.Show("Excel exportado correctamente");
+                    }
+                }
+            }
+            else
+            {
+                MessageBox.Show("No hay datos para exportar");
+            }
         }
     }
 }

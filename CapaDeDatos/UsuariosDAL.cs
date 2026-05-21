@@ -13,7 +13,7 @@ namespace Login_WinForm.CapaDeDatos
         private Conexion conexionDB = new Conexion();
 
         // Método para insertar un nuevo usuario
-        public bool InsertarUsuario(string usuario, string contrasena)
+        public bool InsertarUsuario(string usuario, string contrasena, string rol)
         {
             bool insertado = false;
 
@@ -21,12 +21,13 @@ namespace Login_WinForm.CapaDeDatos
             {
                 using (SqlConnection conexion = conexionDB.ObtenerConexion())
                 {
-                    string query = "INSERT INTO Usuarios (Usuario, Contrasena) VALUES (@Usuario, @Contrasena)";
+                    string query = "INSERT INTO Usuarios (Usuario, Contrasena, Rol) VALUES (@Usuario, @Contrasena, @Rol)";
 
                     using (SqlCommand comando = new SqlCommand(query, conexion))
                     {
                         comando.Parameters.AddWithValue("@Usuario", usuario);
                         comando.Parameters.AddWithValue("@Contrasena", contrasena);
+                        comando.Parameters.AddWithValue("@Rol", rol);
 
                         conexion.Open();
 
@@ -89,7 +90,7 @@ namespace Login_WinForm.CapaDeDatos
 
             using (SqlConnection conexion = conexionDB.ObtenerConexion())
             {
-                string query = "SELECT Id, Usuario, Contrasena FROM Usuarios";
+                string query = "SELECT Id, Usuario, Contrasena, Rol FROM Usuarios";
 
                 SqlDataAdapter adapter = new SqlDataAdapter(query, conexion);
 
@@ -155,7 +156,7 @@ namespace Login_WinForm.CapaDeDatos
         }
 
         // Método para modificar usuarios
-        public bool ModificarUsuario(int id, string usuario, string contrasena)
+        public bool ModificarUsuario(int id, string usuario, string contrasena, string rol)
         {
             bool modificado = false;
 
@@ -163,13 +164,14 @@ namespace Login_WinForm.CapaDeDatos
             {
                 using (SqlConnection conexion = conexionDB.ObtenerConexion())
                 {
-                    string query = "UPDATE Usuarios SET Usuario = @Usuario, Contrasena = @Contrasena WHERE Id = @Id";
+                    string query = "UPDATE Usuarios SET Usuario = @Usuario, Contrasena = @Contrasena, Rol = @Rol WHERE Id = @Id";
 
                     using (SqlCommand comando = new SqlCommand(query, conexion))
                     {
                         comando.Parameters.AddWithValue("@Id", id);
                         comando.Parameters.AddWithValue("@Usuario", usuario);
                         comando.Parameters.AddWithValue("@Contrasena", contrasena);
+                        comando.Parameters.AddWithValue("@Rol", rol);
 
                         conexion.Open();
 
@@ -197,7 +199,7 @@ namespace Login_WinForm.CapaDeDatos
 
             using (SqlConnection conexion = conexionDB.ObtenerConexion())
             {
-                string query = "SELECT Id, Usuario, Contrasena " + "FROM Usuarios " + "WHERE Usuario LIKE @Busqueda";
+                string query = "SELECT Id, Usuario, Contrasena, Rol " + "FROM Usuarios " + "WHERE Usuario LIKE @Busqueda or Rol LIKE @Busqueda or Id LIKE @Busqueda";
 
                 SqlDataAdapter adapter =
                     new SqlDataAdapter(query, conexion);
